@@ -1,0 +1,79 @@
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Test</title>
+    <script>
+        function fetchBinaryFile(path, callback) {
+            const httpRequest = new XMLHttpRequest();
+            httpRequest.onreadystatechange = function() {
+                if (httpRequest.readyState === 4) {
+                    if (httpRequest.status === 200) {
+                        if (callback) callback(httpRequest.response);
+                    }else{
+                        callback(null,httpRequest)
+                    }
+                }
+            };
+            httpRequest.open('GET', path)
+            httpRequest.responseType = "arraybuffer"
+            httpRequest.send()
+        }
+        function fetchFile(path, callback) {
+          const httpRequest = new XMLHttpRequest();
+          httpRequest.onreadystatechange = function() {
+              if (httpRequest.readyState === 4) {
+                  if (httpRequest.status === 200) {
+                      if (callback) callback(httpRequest.responseText);
+                  }else{
+                      callback(null,httpRequest)
+                  }
+              }
+          };
+          httpRequest.open('GET', path);
+          httpRequest.send();
+      }
+
+  		window.onload = function() {
+        fetchBinaryFile('/binaryPoints/0/0/500/500',function(data,error){
+          const imgArray = new Uint8ClampedArray(501*501*4)
+          const dataArray = new Int16Array(data)
+
+          const MIN = Math.abs(0)
+          const MAX = 3000
+          const MIN_PLUS_MAX = MIN+MAX
+
+          for(let idx=0; idx<dataArray.length;idx++){
+            const value = dataArray[idx]
+            const index = idx << 2
+
+            if(value !=0){
+              let fraction = (value + MIN) / MIN_PLUS_MAX
+
+              const scaledValue = 255 * fraction
+
+              imgArray[index] = scaledValue
+              imgArray[index+1] = scaledValue
+              imgArray[index+2] = scaledValue
+            }else{
+              imgArray[index] = 0
+              imgArray[index+1] = 0
+              imgArray[index+2] = 30
+            }
+            imgArray[index+3] = 255
+          }
+
+          const c = document.getElementById("myCanvas");
+          const ctx = c.getContext("2d");
+          ctx.putImageData(new ImageData(imgArray ,501,501), 0, 0);
+
+        })
+        }
+    </script>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="600px" height="600px" style="border:1px solid black;">
+  </body>
+
+  </html>
