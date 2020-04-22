@@ -34,21 +34,22 @@
           httpRequest.open('GET', path);
           httpRequest.send();
       }
-
+      let dataArray = null
   		window.onload = function() {
-        fetchBinaryFile('/binaryPoints/0/0/500/500',function(data,error){
-          const imgArray = new Uint8ClampedArray(501*501*4)
-          const dataArray = new Int16Array(data)
+        fetchBinaryFile('/binaryPoints/2100/2100/3600/3600',function(data,error){
+          const imgArray = new Uint8ClampedArray(1501*1501*4)
+          dataArray = new Int16Array(data)
 
-          const MIN = Math.abs(0)
-          const MAX = 3000
+          const MIN = 0
+          const MAX = 5000
           const MIN_PLUS_MAX = MIN+MAX
 
           for(let idx=0; idx<dataArray.length;idx++){
+
             const value = dataArray[idx]
             const index = idx << 2
 
-            if(value !=0){
+            if(value != 0){
               let fraction = (value + MIN) / MIN_PLUS_MAX
 
               const scaledValue = 255 * fraction
@@ -63,17 +64,17 @@
             }
             imgArray[index+3] = 255
           }
-
+          //console.log(min,max)
           const c = document.getElementById("myCanvas");
           const ctx = c.getContext("2d");
-          ctx.putImageData(new ImageData(imgArray ,501,501), 0, 0);
+          ctx.putImageData(new ImageData(imgArray ,1501,1501), 0, 0);
 
         })
         }
     </script>
   </head>
   <body>
-    <canvas id="myCanvas" width="600px" height="600px" style="border:1px solid black;">
+    <canvas id="myCanvas" width="1600px" height="1600px" style="border:1px solid black;">
   </body>
 
   </html>

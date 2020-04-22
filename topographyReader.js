@@ -1,6 +1,6 @@
 const fs = require('fs')
-const FILENAME = './asd.out'
-//const FILENAME = './topoData/n41_e013_1arc_v3.bil'
+//const FILENAME = './asd.out'
+const FILENAME = './topoData/N42E013.hgt'
 const NROWS = 3601
 const NCOLS = 3601
 const BYTEPERDATA = 2
@@ -17,7 +17,7 @@ function readFile(readIndex,endIndex,callback){
   stream.on("end", function(){
     const arr = []
     for(let idx = 0; idx <dataBuffer.length; idx+=BYTEPERDATA){
-      arr.push( {data:dataBuffer.readInt16LE(idx), point:pointFromIndex(idx+readIndex)} )
+      arr.push( {data:dataBuffer.readInt16BE(idx), point:pointFromIndex(idx+readIndex)} )
     }
     callback(arr)
   })
@@ -36,7 +36,7 @@ function readFile_2(readIndex,endIndex,callback){
     //console.log(arr.length)
     //console.log(dataBuffer.length)
     for(let idx = 0; idx <dataBuffer.length; idx+=BYTEPERDATA){
-      arr[idx/BYTEPERDATA] = dataBuffer.readInt16LE(idx)
+      arr[idx/BYTEPERDATA] = dataBuffer.readInt16BE(idx)
     }
 
     callback(arr)
